@@ -1,13 +1,35 @@
 import pymysql
 from app import app
 from db import mysql
-from flask import jsonify
+from flask import Flask, jsonify, request
+from shapely.geometry import Point, Polygon
+from datetime import datetime, timedelta
+
+# Endpoint to ingest a new trip
+@app.route('/trips', methods=['POST'])
+def ingest_trip():
+    db = mysql.connect()
+    data = request.json
+    region = data['region']
+    origin_coord = data['origin_coord']
+    destination_coord = data['destination_coord']
+    datetime = data['datetime']
+    datasource = data['datasource']
+
+    with db.cursor() as cursor:
+        # Insert the new trip into the database
+        sql = "INSERT INTO trips (region, origin_coord, destination_coord, datetime, datasource) VALUES (%s, ST_PointFromText(%s), ST_PointFromText(%s), %s, %s)"
+        cursor.execute(sql, (region, origin_coord, destination_coord, datetime, datasource))
+        db.commit()
+
+    return jsonify({'message': 'Trip ingested successfully'}), 201
+
 
 @app.route('/')
 def trips():
-    conn = mysql.connect()
+    db = mysql.connect()
 
-    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor = db.cursor(pymysql.cursors.DictCursor)
     cursor.execute("SELECT * FROM trips")
     
     rows = cursor.fetchall()
