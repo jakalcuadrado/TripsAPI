@@ -4,8 +4,8 @@ use trips_db;
 CREATE TABLE trips (
     `trip_id` int NOT NULL AUTO_INCREMENT,
     `region` VARCHAR(255),
-    `origin_coord` POINT,
-    `destination_coord` POINT,
+    `origin_coord` POINT NOT NULL SRID 4326,
+    `destination_coord` POINT NOT NULL SRID 4326,
     `datetime` DATETIME,
     `datasource` VARCHAR(255),
     PRIMARY KEY (`trip_id`)
