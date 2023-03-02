@@ -8,6 +8,5 @@ app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'root'
 app.config['MYSQL_DATABASE_DB'] = 'trips_db'
 app.config['MYSQL_DATABASE_HOST'] = 'db'
-app.config['MYSQL_DATABASE_HOST'] = '216.238.75.201'
 app.config['MYSQL_DATABASE_PORT'] = 30000
 mysql.init_app(app)
