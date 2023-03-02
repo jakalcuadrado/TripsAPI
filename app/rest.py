@@ -31,7 +31,7 @@ def trips():
     db = mysql.connect()
 
     cursor = db.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("SELECT * FROM trips")
+    cursor.execute("SELECT *,st_AsText(origin_coord),st_AsText(origin_coord) FROM trips")
     
     rows = cursor.fetchall()
     row_headers=[x[0] for x in cursor.description]
@@ -54,7 +54,7 @@ def get_weekly_average_trips():
     # Get parameters from request
     region = request.args.get('region')
     bbox = request.args.get('bbox')  # assume format is 'xmin,ymin,xmax,ymax'
-
+    zone=""
     # Define SQL query to get weekly trip totals for the specified area
     if region:
         query = f"""
@@ -63,16 +63,17 @@ def get_weekly_average_trips():
             WHERE region = '{region}'
             GROUP BY week 
         """
-        print(query, file=sys.stderr)
+        zone=region
     elif bbox:
         xmin, ymin, xmax, ymax = bbox.split(',')
         query = f"""
-        SELECT WEEK(datetime) AS week, COUNT(*) AS num_trips, AsText(origin_coord),AsText(origin_coord) FROM trips 
-        WHERE Contains(GeomFromText('POLYGON(({xmin} {ymin}, {xmax} {ymin}, {xmax} {ymax}, {xmin} {ymax}, {xmin} {ymin}))'),origin_coord) 
-        OR Contains(GeomFromText('POLYGON(({xmin} {ymin}, {xmax} {ymin}, {xmax} {ymax}, {xmin} {ymax}, {xmin} {ymin}))'), destination_coord)
+        SELECT WEEK(datetime) as week, COUNT(*) as num_trips
+        FROM trips 
+        WHERE st_Contains(st_GeomFromText('POLYGON(({xmin} {ymin}, {xmax} {ymin}, {xmax} {ymax}, {xmin} {ymax}, {xmin} {ymin}))'),origin_coord) 
+        OR st_Contains(st_GeomFromText('POLYGON(({xmin} {ymin}, {xmax} {ymin}, {xmax} {ymax}, {xmin} {ymax}, {xmin} {ymin}))'), destination_coord)
         GROUP BY week
         """
-        print(query, file=sys.stderr)
+        zone=bbox
     else:
         return jsonify(error='Must provide either "region" or "bbox" parameter'), 400
 
@@ -92,7 +93,7 @@ def get_weekly_average_trips():
 
 
     # Return weekly averages as JSON response
-    name='weekly_average in '+region
+    name='weekly_average_trips in '+zone
     return jsonify({name: weekly_average}), 200
 
     resp = jsonify(data)

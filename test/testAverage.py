@@ -5,8 +5,8 @@ BASE_URL = 'http://localhost:5000'
 
 # Define the test cases
 test_cases = [
-    {'params': {'region': 'Prague'}, 'expected_output': {"weekly_average in Prague": 1.0}},
-    {'params': {'bbox': '14.0,49.8,14.6,50.2'}, 'expected_output': {'weekly_average': 5}},
+    {'params': {'region': 'Prague'}, 'expected_output': {'weekly_average_trips in Prague': 1.0}},
+    {'params': {'bbox': '14.0,49.8,14.6,50.2'}, 'expected_output': {'weekly_average_trips in 14.0,49.8,14.6,50.2': 1.0}},
 ]
 
 # Test the endpoint for each test case
