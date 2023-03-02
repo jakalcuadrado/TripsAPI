@@ -13,4 +13,5 @@ Results of the coding challenge
 - Sketch up how you would set up the application using any cloud provider (AWS, GoogleCloud, etc).**No Done**
 - Include a .sql file with queries to answer these questions:
     > From the two most commonly appearing regions, which is the latest datasource?  [Link](db/latestDataSource.sql)
+
     > What regions has the "cheap_mobile" datasource appeared in? [Link](db/cheap_mobile.sql)
